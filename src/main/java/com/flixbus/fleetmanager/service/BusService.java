@@ -40,7 +40,7 @@ public class BusService {
   public BusDto create(BusDto newBus) {
     busValidator.validate(null, newBus);
     depotValidator.validateExists(newBus.getDepotId());
-    Bus bus = busMapper.fromDto(newBus);
+    Bus bus = busMapper.fromDto(null, newBus);
     bus.setDepot(depotRepository.getById(newBus.getDepotId()));
     return busMapper.toDto(busRepository.saveAndFlush(bus));
   }
@@ -49,7 +49,7 @@ public class BusService {
   public BusDto edit(Integer id, BusDto busDto) {
     busValidator.validate(id, busDto);
     depotValidator.validateExists(busDto.getDepotId());
-    Bus bus = busMapper.fromDto(busDto);
+    Bus bus = busMapper.fromDto(id, busDto);
     bus.setId(id);
     bus.setDepot(depotRepository.getById(busDto.getDepotId()));
     return busMapper.toDto(busRepository.saveAndFlush(bus));
@@ -60,13 +60,6 @@ public class BusService {
   }
 
   public List<BusDto> search(BusSearchRequest busSearchRequest) {
-//    Specification<Bus> specification = specificationProvider.createBusSpecification(busSearchRequest);
-//    return busRepository.findAll(specification);
-
-//    BooleanExpression combinedFilter = combinedFilterExpression(busSearchRequest);
-//    return (List<Bus>) busRepository.findAll(combinedFilter);
-//    return busRepository.searchByCombinedFilter(busSearchRequest.)
-
     List<Bus> buses = busRepository.filterBuses(busSearchRequest);
     return busMapper.toDtoList(buses);
   }

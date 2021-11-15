@@ -1,5 +1,6 @@
 package com.flixbus.fleetmanager.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.flixbus.fleetmanager.model.BusColor;
 import com.flixbus.fleetmanager.model.BusType;
 import lombok.AllArgsConstructor;
@@ -9,13 +10,14 @@ import lombok.Data;
 @AllArgsConstructor
 public class BusSearchRequest {
 
-  private String plateNumber;
+  @JsonProperty("plateNumber")
+  private StringTerm plateNumber;
+
+  @JsonProperty("capacity")
+  private NumberTerm capacity;
+
+  private String depotName;
   private BusType type;
   private BusColor color;
-//  private Pair<Integer, OperationType> capacity;
-//  private NumberOperation capacity;
-  private Integer capacity;
-  private OperationType operation;
-  private String depotName;
 
 }

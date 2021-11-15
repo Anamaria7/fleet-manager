@@ -1,13 +1,8 @@
 package com.flixbus.fleetmanager.controller.request;
 
-public enum OperationType {
+public enum StringFilterType {
 
   EQUALS,
-  LTE,
-  GTE,
-  LT,
-  GT,
   CONTAINS
-
 
 }

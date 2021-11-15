@@ -1,7 +1,6 @@
 package com.flixbus.fleetmanager.repository;
 
 import com.flixbus.fleetmanager.controller.request.BusSearchRequest;
-import com.flixbus.fleetmanager.controller.request.OperationType;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.repository.criteria.BusQueryBuilder;
 import java.util.List;
@@ -19,11 +18,11 @@ public class BusRepositoryCustomImpl implements BusRepositoryCustom {
   public List<Bus> filterBuses(BusSearchRequest busSearchRequest) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-    CriteriaQuery<Bus> query = new BusQueryBuilder(cb) //TODO operation
-        .withPlateNumber(OperationType.CONTAINS, busSearchRequest.getPlateNumber())
+    CriteriaQuery<Bus> query = new BusQueryBuilder(cb)
+        .withStringTerm(busSearchRequest.getPlateNumber(), BusQueryBuilder.FIELD_PLATE_NUMBER)
         .withBusType(busSearchRequest.getType())
         .withBusColor(busSearchRequest.getColor())
-        .withBusCapacity(OperationType.GTE, busSearchRequest.getCapacity())
+        .withNumberTerm(busSearchRequest.getCapacity(), BusQueryBuilder.FIELD_CAPACITY)
         .withDepotName(busSearchRequest.getDepotName())
         .build();
 

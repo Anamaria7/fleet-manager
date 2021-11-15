@@ -1,6 +1,8 @@
 package com.flixbus.fleetmanager.repository.criteria;
 
-import com.flixbus.fleetmanager.controller.request.OperationType;
+import com.flixbus.fleetmanager.controller.request.NumberTerm;
+import com.flixbus.fleetmanager.controller.request.StringFilterType;
+import com.flixbus.fleetmanager.controller.request.StringTerm;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.BusColor;
 import com.flixbus.fleetmanager.model.BusType;
@@ -32,13 +34,6 @@ public class BusQueryBuilder {
     predicates = new ArrayList<>();
   }
 
-  public BusQueryBuilder withPlateNumber(OperationType operation, String value) {
-    if (value != null) { //TODO operation
-      predicates.add(criteriaBuilder.like(bus.get(FIELD_PLATE_NUMBER), "%" + value + "%"));
-    }
-    return this;
-  }
-
   public BusQueryBuilder withBusType(BusType value) {
     if (value != null) {
       predicates.add(criteriaBuilder.equal(bus.get(FIELD_TYPE), value));
@@ -53,27 +48,37 @@ public class BusQueryBuilder {
     return this;
   }
 
-  public BusQueryBuilder withBusCapacity(OperationType operation, Integer value) {
-    if (value != null) {
-      if (operation != null) {
-        switch (operation) {
+  public BusQueryBuilder withStringTerm(StringTerm term, String field) {
+    if (term != null && term.getValue() != null) {
+      if (term.getFilterType() == StringFilterType.EQUALS) {
+        predicates.add(criteriaBuilder.equal(bus.get(field), term.getValue()));
+      } else {
+        predicates.add(criteriaBuilder.like(bus.get(field), "%" + term.getValue() + "%"));
+      }
+
+    }
+    return this;
+  }
+
+  public BusQueryBuilder withNumberTerm(NumberTerm term, String field) {
+    if (term != null && term.getValue() != null) {
+        switch (term.getFilterType()) {
           case EQUALS:
-            predicates.add(criteriaBuilder.equal(bus.get(FIELD_CAPACITY), value));
+            predicates.add(criteriaBuilder.equal(bus.get(field), term.getValue()));
             break;
           case LT:
-            predicates.add(criteriaBuilder.lessThan(bus.get(FIELD_CAPACITY), value));
+            predicates.add(criteriaBuilder.lessThan(bus.get(field), term.getValue()));
             break;
           case LTE:
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(bus.get(FIELD_CAPACITY), value));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(bus.get(field), term.getValue()));
             break;
           case GT:
-            predicates.add(criteriaBuilder.greaterThan(bus.get(FIELD_CAPACITY), value));
+            predicates.add(criteriaBuilder.greaterThan(bus.get(field), term.getValue()));
             break;
           case GTE:
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(bus.get(FIELD_CAPACITY), value));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(bus.get(field), term.getValue()));
             break;
         }
-      }
     }
     return this;
   }
@@ -90,13 +95,7 @@ public class BusQueryBuilder {
       return null;
     }
 
-//    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<Bus> query = criteriaBuilder.createQuery(Bus.class);
-//    Root<Bus> bus = query.from(Bus.class);
-
-
-    query.
-        select(bus).where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
+    query.select(bus).where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
     return query;
   }
 

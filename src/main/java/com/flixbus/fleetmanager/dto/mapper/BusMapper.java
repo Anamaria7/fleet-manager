@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BusMapper { //TODO mapstruct - unit tests
+public class BusMapper {
 
   public BusDto toDto(Bus bus) {
     BusDto busDto = new BusDto();
@@ -19,8 +19,9 @@ public class BusMapper { //TODO mapstruct - unit tests
     return busDto;
   }
 
-  public Bus fromDto(BusDto busDto) {
+  public Bus fromDto(Integer id, BusDto busDto) {
     Bus bus = new Bus();
+    bus.setId(id);
     bus.setPlateNumber(busDto.getPlateNumber());
     bus.setType(busDto.getType());
     bus.setColor(busDto.getColor());
@@ -39,7 +40,7 @@ public class BusMapper { //TODO mapstruct - unit tests
   public List<Bus> fromDtoList(List<BusDto> busDtos) {
     List<Bus> buses = new ArrayList<>();
     for (BusDto bus : busDtos) {
-      buses.add(fromDto(bus));
+      buses.add(fromDto(null, bus));
     }
     return buses;
   }
