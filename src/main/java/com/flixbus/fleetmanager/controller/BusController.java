@@ -29,17 +29,17 @@ public class BusController {
   }
 
   @GetMapping()
-  public Bus getBusByPlateNumber(@RequestParam(value = "plateNumber") String plateNumber) {
+  public BusDto getBusByPlateNumber(@RequestParam(value = "plateNumber") String plateNumber) {
     return busService.getDetailsByPlateNumber(plateNumber);
   }
 
   @PostMapping
-  public Bus createBus(@RequestBody Bus newBus) {
+  public BusDto createBus(@RequestBody BusDto newBus) {
     return busService.create(newBus);
   }
 
   @PostMapping("/{id}")
-  public Bus editBus(@PathVariable Integer id, @RequestBody Bus bus) {
+  public BusDto editBus(@PathVariable Integer id, @RequestBody BusDto bus) {
     return busService.edit(id, bus);
   }
 
@@ -54,7 +54,7 @@ public class BusController {
   }
 
   @PostMapping("/filter")
-  public List<Bus> filter(@RequestBody BusSearchRequest busSearchRequest) {
+  public List<BusDto> filter(@RequestBody BusSearchRequest busSearchRequest) {
     return busService.filter(busSearchRequest);
   }
 }

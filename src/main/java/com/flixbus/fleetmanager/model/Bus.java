@@ -10,9 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Bus {
 
@@ -31,11 +33,11 @@ public class Bus {
 
   private Integer capacity;
 
-  @Column(name = "DEPOT_ID", insertable = false, updatable = false)
-  private Integer depotId;
+//  @Column(name = "DEPOT_ID", insertable = false, updatable = false)
+//  private Integer depotId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "DEPOT_ID")
+  @JoinColumn(name = "DEPOT_ID", referencedColumnName = "ID")
   private Depot depot;
 
 }

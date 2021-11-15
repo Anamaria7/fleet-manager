@@ -6,7 +6,8 @@ public enum OperationType {
   LTE,
   GTE,
   LT,
-  GT
+  GT,
+  CONTAINS
 
 
 }

@@ -15,7 +15,7 @@ public class BusSpecificationsBuilder {
   }
 
   public BusSpecificationsBuilder with(String key, String operation, Object value) {
-    params.add(new SearchCriteria(key, operation, value));
+//    params.add(new SearchCriteria(key, operation, value));
     return this;
   }
 

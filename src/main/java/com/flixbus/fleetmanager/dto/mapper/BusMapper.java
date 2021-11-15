@@ -11,13 +11,21 @@ public class BusMapper { //TODO mapstruct - unit tests
 
   public BusDto toDto(Bus bus) {
     BusDto busDto = new BusDto();
-    busDto.setId(bus.getId());
     busDto.setPlateNumber(bus.getPlateNumber());
     busDto.setType(bus.getType());
     busDto.setColor(bus.getColor());
     busDto.setCapacity(bus.getCapacity());
-    busDto.setDepotId(bus.getDepotId());
+    busDto.setDepotId(bus.getDepot() != null ? bus.getDepot().getId() : null);
     return busDto;
+  }
+
+  public Bus fromDto(BusDto busDto) {
+    Bus bus = new Bus();
+    bus.setPlateNumber(busDto.getPlateNumber());
+    bus.setType(busDto.getType());
+    bus.setColor(busDto.getColor());
+    bus.setCapacity(busDto.getCapacity());
+    return bus;
   }
 
   public List<BusDto> toDtoList(List<Bus> buses) {
@@ -26,5 +34,13 @@ public class BusMapper { //TODO mapstruct - unit tests
       busDtos.add(toDto(bus));
     }
     return busDtos;
+  }
+
+  public List<Bus> fromDtoList(List<BusDto> busDtos) {
+    List<Bus> buses = new ArrayList<>();
+    for (BusDto bus : busDtos) {
+      buses.add(fromDto(bus));
+    }
+    return buses;
   }
 }
