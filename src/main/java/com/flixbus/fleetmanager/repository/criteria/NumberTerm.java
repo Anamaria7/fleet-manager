@@ -1,4 +1,4 @@
-package com.flixbus.fleetmanager.controller.request;
+package com.flixbus.fleetmanager.repository.criteria;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

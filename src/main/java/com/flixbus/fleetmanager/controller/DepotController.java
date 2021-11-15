@@ -1,8 +1,6 @@
 package com.flixbus.fleetmanager.controller;
 
-import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.dto.DepotDto;
-import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.service.DepotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;

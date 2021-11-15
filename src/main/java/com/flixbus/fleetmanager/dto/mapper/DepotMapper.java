@@ -1,6 +1,5 @@
 package com.flixbus.fleetmanager.dto.mapper;
 
-import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.dto.DepotDto;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.Depot;

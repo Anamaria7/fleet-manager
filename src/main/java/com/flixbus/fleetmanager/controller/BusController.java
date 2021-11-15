@@ -2,9 +2,6 @@ package com.flixbus.fleetmanager.controller;
 
 import com.flixbus.fleetmanager.controller.request.BusSearchRequest;
 import com.flixbus.fleetmanager.dto.BusDto;
-import com.flixbus.fleetmanager.model.Bus;
-import com.flixbus.fleetmanager.model.BusColor;
-import com.flixbus.fleetmanager.model.BusType;
 import com.flixbus.fleetmanager.service.BusService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

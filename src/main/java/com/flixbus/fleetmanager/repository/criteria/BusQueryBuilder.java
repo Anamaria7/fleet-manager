@@ -1,8 +1,5 @@
 package com.flixbus.fleetmanager.repository.criteria;
 
-import com.flixbus.fleetmanager.controller.request.NumberTerm;
-import com.flixbus.fleetmanager.controller.request.StringFilterType;
-import com.flixbus.fleetmanager.controller.request.StringTerm;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.BusColor;
 import com.flixbus.fleetmanager.model.BusType;
