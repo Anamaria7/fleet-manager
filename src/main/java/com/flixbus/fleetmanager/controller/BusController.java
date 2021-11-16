@@ -56,6 +56,5 @@ public class BusController {
   }
 }
 
-//TODO advice
 //TODO filter
 //TODO unit tests
