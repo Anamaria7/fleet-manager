@@ -47,12 +47,19 @@ public class BusQueryBuilder {
 
   public BusQueryBuilder withStringTerm(StringTerm term, String field) {
     if (term != null && term.getValue() != null) {
-      if (term.getFilterType() == StringFilterType.EQUALS) {
-        predicates.add(criteriaBuilder.equal(bus.get(field), term.getValue()));
-      } else {
-        predicates.add(criteriaBuilder.like(bus.get(field), "%" + term.getValue() + "%"));
+      switch (term.getFilterType()) {
+        case EQUALS:
+          predicates.add(criteriaBuilder.equal(bus.get(field), term.getValue()));
+          break;
+        case EQUALS_IGNORE_CASE:
+          predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(bus.get(field)), term.getValue().toLowerCase()));
+          break;
+        case CONTAINS_IGNORE_CASE:
+          predicates.add(criteriaBuilder.like(criteriaBuilder.lower(bus.get(field)), "%" + term.getValue().toLowerCase() + "%"));
+          break;
+        default:
+          predicates.add(criteriaBuilder.like(bus.get(field), "%" + term.getValue() + "%"));
       }
-
     }
     return this;
   }

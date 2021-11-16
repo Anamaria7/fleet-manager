@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BusDto {
 
+  private Integer id;
   private String plateNumber;
   private BusType type;
   private BusColor color;

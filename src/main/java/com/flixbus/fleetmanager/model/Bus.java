@@ -37,7 +37,7 @@ public class Bus {
 //  private Integer depotId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "DEPOT_ID", referencedColumnName = "ID")
+  @JoinColumn(name = "DEPOT_ID", referencedColumnName = "ID") //, nullable = false)
   private Depot depot;
 
 }

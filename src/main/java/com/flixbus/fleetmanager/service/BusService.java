@@ -4,11 +4,13 @@ import com.flixbus.fleetmanager.controller.request.BusSearchRequest;
 import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.dto.mapper.BusMapper;
 import com.flixbus.fleetmanager.model.Bus;
+import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
 import com.flixbus.fleetmanager.repository.DepotRepository;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,25 +35,34 @@ public class BusService {
   }
 
   public BusDto getDetailsByPlateNumber(String plateNumber) {
-    return busMapper.toDto(busRepository.findFirstByPlateNumberContains(plateNumber));
+    Bus bus = busRepository.findFirstByPlateNumberEquals(plateNumber);
+    if (bus != null) {
+      return busMapper.toDto(bus);
+    }
+    return null;
   }
 
   @Transactional
-  public BusDto create(BusDto newBus) {
-    busValidator.validate(null, newBus);
-    depotValidator.validateExists(newBus.getDepotId());
-    Bus bus = busMapper.fromDto(null, newBus);
-    bus.setDepot(depotRepository.getById(newBus.getDepotId()));
+  public BusDto create(BusDto busDto) {
+    busValidator.validateOnCreate(null, busDto);
+    Bus bus = busMapper.fromDto(null, busDto);
+    if (busDto.getDepotId() != null) {
+      Depot depot = depotRepository.getById(busDto.getDepotId());
+      depotValidator.validateCapacityOnAddBus(depot);
+      bus.setDepot(depot);
+    }
     return busMapper.toDto(busRepository.saveAndFlush(bus));
   }
 
   @Transactional
   public BusDto edit(Integer id, BusDto busDto) {
-    busValidator.validate(id, busDto);
-    depotValidator.validateExists(busDto.getDepotId());
+    busValidator.validateOnEdit(id, busDto);
     Bus bus = busMapper.fromDto(id, busDto);
-    bus.setId(id);
-    bus.setDepot(depotRepository.getById(busDto.getDepotId()));
+    if (busDto.getDepotId() != null) {
+      Depot depot = depotValidator.validateExists(busDto.getDepotId());
+      depotValidator.validateCapacityOnAddBus(depot);
+      bus.setDepot(depot);
+    }
     return busMapper.toDto(busRepository.saveAndFlush(bus));
   }
 

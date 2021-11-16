@@ -4,6 +4,7 @@ import com.flixbus.fleetmanager.dto.DepotDto;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
+import com.flixbus.fleetmanager.service.validator.BusValidator;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,17 @@ import org.springframework.stereotype.Component;
 public class DepotMapper {
 
   private final BusRepository busRepository;
+  private final BusValidator busValidator;
 
   @Autowired
-  public DepotMapper(BusRepository busRepository) {
+  public DepotMapper(BusRepository busRepository, BusValidator busValidator) {
     this.busRepository = busRepository;
+    this.busValidator = busValidator;
   }
 
   public DepotDto toDto(Depot depot) {
     DepotDto depotDto = new DepotDto();
+    depotDto.setId(depot.getId());
     depotDto.setCapacity(depot.getCapacity());
     depotDto.setName(depot.getName());
 
@@ -39,14 +43,15 @@ public class DepotMapper {
     List<Bus> buses = new ArrayList<>();
     if (depotDto.getParkedBusIds() != null) {
       for (Integer busId : depotDto.getParkedBusIds()) {
-        buses.add(busRepository.getById(busId));
+        buses.add(busValidator.validateExists(busId));
       }
     }
     return buses;
   }
 
-  public Depot fromDto(DepotDto depotDto) {
+  public Depot fromDto(Integer id, DepotDto depotDto) {
     Depot depot = new Depot();
+    depot.setId(id);
     depot.setCapacity(depotDto.getCapacity());
     depot.setName(depotDto.getName());
 
@@ -68,7 +73,7 @@ public class DepotMapper {
   public List<Depot> fromDtoList(List<DepotDto> depotDtos) {
     List<Depot> depots = new ArrayList<>();
     for (DepotDto depotDto : depotDtos) {
-      depots.add(fromDto(depotDto));
+      depots.add(fromDto(depotDto.getId(), depotDto));
     }
     return depots;
   }

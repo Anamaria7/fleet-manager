@@ -3,6 +3,8 @@ package com.flixbus.fleetmanager.repository.criteria;
 public enum StringFilterType {
 
   EQUALS,
-  CONTAINS
+  EQUALS_IGNORE_CASE,
+  CONTAINS,
+  CONTAINS_IGNORE_CASE
 
 }

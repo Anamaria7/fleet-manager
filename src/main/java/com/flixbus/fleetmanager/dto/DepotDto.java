@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepotDto {
 
+
+  private Integer id;
   private String name;
   private Integer capacity;
   private List<Integer> parkedBusIds;

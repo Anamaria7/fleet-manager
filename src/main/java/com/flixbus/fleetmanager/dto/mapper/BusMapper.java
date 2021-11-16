@@ -2,15 +2,25 @@ package com.flixbus.fleetmanager.dto.mapper;
 
 import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.model.Bus;
+import com.flixbus.fleetmanager.repository.DepotRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusMapper {
 
+  private final DepotRepository depotRepository;
+
+  @Autowired
+  public BusMapper(DepotRepository depotRepository) {
+    this.depotRepository = depotRepository;
+  }
+
   public BusDto toDto(Bus bus) {
     BusDto busDto = new BusDto();
+    busDto.setId(bus.getId());
     busDto.setPlateNumber(bus.getPlateNumber());
     busDto.setType(bus.getType());
     busDto.setColor(bus.getColor());
@@ -26,6 +36,7 @@ public class BusMapper {
     bus.setType(busDto.getType());
     bus.setColor(busDto.getColor());
     bus.setCapacity(busDto.getCapacity());
+
     return bus;
   }
 

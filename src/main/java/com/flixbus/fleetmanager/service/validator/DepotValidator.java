@@ -1,10 +1,14 @@
 package com.flixbus.fleetmanager.service.validator;
 
 import com.flixbus.fleetmanager.dto.DepotDto;
+import com.flixbus.fleetmanager.error.ServerToClientException;
 import com.flixbus.fleetmanager.model.Bus;
+import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
 import com.flixbus.fleetmanager.repository.DepotRepository;
+import com.flixbus.fleetmanager.service.TranslationService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,51 +17,49 @@ public class DepotValidator {
 
   private final DepotRepository depotRepository;
   private final BusRepository busRepository;
-  private final BusValidator busValidator;
+  private final TranslationService translationService;
 
   @Autowired
-  public DepotValidator(DepotRepository depotRepository, BusRepository busRepository, BusValidator busValidator) {
+  public DepotValidator(DepotRepository depotRepository, BusRepository busRepository, TranslationService translationService) {
     this.depotRepository = depotRepository;
     this.busRepository = busRepository;
-    this.busValidator = busValidator;
+    this.translationService = translationService;
   }
 
   public void validateOnCreate(DepotDto depotDto) {
     validateCapacity(depotDto);
-    validateBuses(depotDto.getParkedBusIds());
   }
 
   public void validateOnEdit(Integer id, DepotDto depotDto) {
     validateExists(id);
     validateCapacity(depotDto);
-    validateBuses(depotDto.getParkedBusIds());
-  }
-
-  public void validateExists(Integer id) {
-    if (id!= null && depotRepository.findById(id).isEmpty()) {
-      throw new IllegalArgumentException("Depot with id " + id + " does not exist");
-    }
-  }
-
-  private void validateBuses(List<Integer> parkedBusIds) {
-    if (parkedBusIds != null) {
-      for (Integer busId : parkedBusIds) {
-        busValidator.validateExists(busId);
-      }
-    }
-  }
-
-  private void validateCapacity(DepotDto depotDto) {
-    int exceedBy = depotDto.getParkedBusIds().size() - depotDto.getCapacity();
-    if (depotDto != null && exceedBy > 0) {
-      throw new IllegalArgumentException("Bus capacity exceeded by " + exceedBy + " buses");
-    }
   }
 
   public void validateOnDelete(Integer id) {
     List<Bus> buses = busRepository.findByDepotId(id);
     if (buses != null && !buses.isEmpty()) {
-      throw new IllegalStateException("Cannot delete depot with id " + id + ". Buses connected");
+      throw new ServerToClientException(translationService.get("depot.delete.not.allowed", id));
+    }
+  }
+
+  public Depot validateExists(Integer id) {
+    Optional<Depot> depot = depotRepository.findById(id);
+    if (depot.isEmpty()) {
+      throw new ServerToClientException(translationService.get("depot.not.exists", id));
+    }
+    return depot.get();
+  }
+
+  public void validateCapacityOnAddBus(Depot depot) {
+    if (depot.getParkedBuses().size() - depot.getCapacity() >= 0) {
+      throw new ServerToClientException(translationService.get("depot.capacity.exceeded"));
+    }
+  }
+
+  private void validateCapacity(DepotDto depotDto) {
+    int exceedBy = depotDto.getParkedBusIds().size() - depotDto.getCapacity();
+    if (exceedBy > 0) {
+      throw new ServerToClientException(translationService.get("depot.capacity.exceeded.by", exceedBy));
     }
   }
 }

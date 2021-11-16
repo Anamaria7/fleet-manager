@@ -30,15 +30,14 @@ public class DepotService {
   @Transactional
   public DepotDto create(DepotDto depotDto) {
     depotValidator.validateOnCreate(depotDto);
-    Depot depot = depotMapper.fromDto(depotDto);
+    Depot depot = depotMapper.fromDto(null, depotDto);
     return depotMapper.toDto(depotRepository.saveAndFlush(depot));
   }
 
   @Transactional
   public DepotDto edit(Integer id, DepotDto depotDto) {
     depotValidator.validateOnEdit(id, depotDto);
-    Depot depot = depotMapper.fromDto(depotDto);
-    depot.setId(id);
+    Depot depot = depotMapper.fromDto(id, depotDto);
     return depotMapper.toDto(depotRepository.saveAndFlush(depot));
   }
 

@@ -19,9 +19,9 @@
 --     CAPACITY INT NOT NULL
 -- );
 
-ALTER TABLE BUS
-    ADD FOREIGN KEY (DEPOT_ID)
-    REFERENCES DEPOT(ID);
+-- ALTER TABLE BUS
+--     ADD FOREIGN KEY (DEPOT_ID)
+--     REFERENCES DEPOT(ID);
 
 -- INSERT DATA
 
@@ -29,7 +29,7 @@ INSERT INTO DEPOT (DEPOT_NAME, CAPACITY) VALUES
 ('Grand Central Station', 20),
 ('Downtown', 5),
 ('Uptown', 10),
-('Far Far Away', 20),
+('Far Far Away', 3),
 ('Diagonalley', 7);
 
 INSERT INTO BUS (PLATE_NUMBER, TYPE, COLOR, CAPACITY, DEPOT_ID) VALUES
