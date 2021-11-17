@@ -1,6 +1,7 @@
 package com.flixbus.fleetmanager.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,9 +32,9 @@ public class Depot {
   private List<Bus> parkedBuses;
 
   public void setParkedBuses(List<Bus> parkedBuses) {
-    for (Bus bus : parkedBuses) {
-      bus.setDepot(this);
+    this.parkedBuses = null;
+    if (parkedBuses != null) {
+      this.parkedBuses = parkedBuses.stream().peek(bus -> bus.setDepot(this)).collect(Collectors.toList());
     }
-    this.parkedBuses = parkedBuses;
   }
 }

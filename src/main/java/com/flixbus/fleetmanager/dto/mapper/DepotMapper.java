@@ -6,6 +6,7 @@ import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +26,8 @@ public class DepotMapper {
     depotDto.setCapacity(depot.getCapacity());
     depotDto.setName(depot.getName());
 
-    if (depot.getParkedBuses()!= null && !depot.getParkedBuses().isEmpty()) {
-      List<Integer> buses = new ArrayList<>();
-      for (Bus bus : depot.getParkedBuses()) {
-        buses.add(bus.getId());
-      }
-      depotDto.setParkedBusIds(buses);
+    if (depot.getParkedBuses() != null) {
+      depotDto.setParkedBusIds(depot.getParkedBuses().stream().map(Bus::getId).collect(Collectors.toList()));
     }
 
     return depotDto;
@@ -39,9 +36,7 @@ public class DepotMapper {
   private List<Bus> loadDepotBuses(DepotDto depotDto) {
     List<Bus> buses = new ArrayList<>();
     if (depotDto.getParkedBusIds() != null) {
-      for (Integer busId : depotDto.getParkedBusIds()) {
-        buses.add(busValidator.validateExists(busId));
-      }
+      buses.addAll(depotDto.getParkedBusIds().stream().map(busValidator::validateExists).collect(Collectors.toList()));
     }
     return buses;
   }
@@ -61,16 +56,16 @@ public class DepotMapper {
 
   public List<DepotDto> toDtoList(List<Depot> depots) {
     List<DepotDto> list = new ArrayList<>();
-    for (Depot depot : depots) {
-      list.add(toDto(depot));
+    if (depots != null) {
+      list.addAll(depots.stream().map(this::toDto).collect(Collectors.toList()));
     }
     return list;
   }
 
   public List<Depot> fromDtoList(List<DepotDto> depotDtos) {
     List<Depot> depots = new ArrayList<>();
-    for (DepotDto depotDto : depotDtos) {
-      depots.add(fromDto(depotDto.getId(), depotDto));
+    if (depotDtos != null) {
+      depots.addAll(depotDtos.stream().map(depot -> fromDto(depot.getId(), depot)).collect(Collectors.toList()));
     }
     return depots;
   }

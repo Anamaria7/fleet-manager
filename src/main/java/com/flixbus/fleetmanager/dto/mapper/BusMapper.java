@@ -2,10 +2,9 @@ package com.flixbus.fleetmanager.dto.mapper;
 
 import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.model.Bus;
-import com.flixbus.fleetmanager.repository.DepotRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,16 +34,16 @@ public class BusMapper {
 
   public List<BusDto> toDtoList(List<Bus> buses) {
     List<BusDto> busDtos = new ArrayList<>();
-    for (Bus bus : buses) {
-      busDtos.add(toDto(bus));
+    if (buses != null) {
+      busDtos.addAll(buses.stream().map(this::toDto).collect(Collectors.toList()));
     }
     return busDtos;
   }
 
   public List<Bus> fromDtoList(List<BusDto> busDtos) {
     List<Bus> buses = new ArrayList<>();
-    for (BusDto bus : busDtos) {
-      buses.add(fromDto(null, bus));
+    if (busDtos != null) {
+      buses.addAll(busDtos.stream().map(bus -> fromDto(null, bus)).collect(Collectors.toList()));
     }
     return buses;
   }
