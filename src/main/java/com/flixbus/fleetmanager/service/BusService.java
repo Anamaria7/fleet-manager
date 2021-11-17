@@ -10,7 +10,6 @@ import com.flixbus.fleetmanager.repository.DepotRepository;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,16 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class BusService {
 
   private final BusRepository busRepository;
-  private final DepotRepository depotRepository;
   private final BusMapper busMapper;
   private final BusValidator busValidator;
   private final DepotValidator depotValidator;
 
   @Autowired
-  public BusService(BusRepository busRepository, DepotRepository depotRepository, BusMapper busMapper,
+  public BusService(BusRepository busRepository, BusMapper busMapper,
       BusValidator busValidator, DepotValidator depotValidator) {
     this.busRepository = busRepository;
-    this.depotRepository = depotRepository;
     this.busMapper = busMapper;
     this.busValidator = busValidator;
     this.depotValidator = depotValidator;
@@ -45,18 +42,16 @@ public class BusService {
   @Transactional
   public BusDto create(BusDto busDto) {
     busValidator.validateOnCreate(null, busDto);
-    Bus bus = busMapper.fromDto(null, busDto);
-    if (busDto.getDepotId() != null) {
-      Depot depot = depotRepository.getById(busDto.getDepotId());
-      depotValidator.validateCapacityOnAddBus(depot);
-      bus.setDepot(depot);
-    }
-    return busMapper.toDto(busRepository.saveAndFlush(bus));
+    return saveBus(null, busDto);
   }
 
   @Transactional
   public BusDto edit(Integer id, BusDto busDto) {
     busValidator.validateOnEdit(id, busDto);
+    return saveBus(id, busDto);
+  }
+
+  private BusDto saveBus(Integer id, BusDto busDto) {
     Bus bus = busMapper.fromDto(id, busDto);
     if (busDto.getDepotId() != null) {
       Depot depot = depotValidator.validateExists(busDto.getDepotId());

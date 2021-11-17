@@ -26,13 +26,8 @@ public class DepotValidator {
     this.translationService = translationService;
   }
 
-  public void validateOnCreate(DepotDto depotDto) {
-    validateCapacity(depotDto);
-  }
-
-  public void validateOnEdit(Integer id, DepotDto depotDto) {
+  public void validateOnEdit(Integer id) {
     validateExists(id);
-    validateCapacity(depotDto);
   }
 
   public void validateOnDelete(Integer id) {
@@ -53,13 +48,6 @@ public class DepotValidator {
   public void validateCapacityOnAddBus(Depot depot) {
     if (depot.getParkedBuses().size() - depot.getCapacity() >= 0) {
       throw new ServerToClientException(translationService.get("depot.capacity.exceeded"));
-    }
-  }
-
-  private void validateCapacity(DepotDto depotDto) {
-    int exceedBy = depotDto.getParkedBusIds().size() - depotDto.getCapacity();
-    if (exceedBy > 0) {
-      throw new ServerToClientException(translationService.get("depot.capacity.exceeded.by", exceedBy));
     }
   }
 }

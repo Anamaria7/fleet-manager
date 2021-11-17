@@ -11,13 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusMapper {
 
-  private final DepotRepository depotRepository;
-
-  @Autowired
-  public BusMapper(DepotRepository depotRepository) {
-    this.depotRepository = depotRepository;
-  }
-
   public BusDto toDto(Bus bus) {
     BusDto busDto = new BusDto();
     busDto.setId(bus.getId());

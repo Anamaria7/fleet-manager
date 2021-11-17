@@ -33,12 +33,11 @@ public class BusValidator {
     validateCapacity(bus.getCapacity());
   }
 
-  public Bus validateExists(Integer id) {
+  public void validateExists(Integer id) {
     Optional<Bus> bus = busRepository.findById(id);
     if (bus.isEmpty()) {
       throw new ServerToClientException(translationService.get("bus.not.exists", id));
     }
-    return bus.get();
   }
 
   private void validatePlateNumber(Integer id, BusDto bus) {
@@ -49,7 +48,7 @@ public class BusValidator {
   }
 
   private void validateCapacity(Integer capacity) {
-    if ((capacity < MIN_CAPACITY) || (capacity > MAX_CAPACITY)) {
+    if ((capacity == null) || (capacity < MIN_CAPACITY) || (capacity > MAX_CAPACITY)) {
       throw new ServerToClientException(translationService.get("bus.capacity.invalid", capacity));
     }
   }

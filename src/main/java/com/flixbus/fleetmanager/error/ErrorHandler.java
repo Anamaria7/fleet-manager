@@ -1,4 +1,4 @@
-package com.flixbus.fleetmanager.controller;
+package com.flixbus.fleetmanager.error;
 
 import com.flixbus.fleetmanager.error.ErrorInfo;
 import com.flixbus.fleetmanager.error.ErrorInfoService;
