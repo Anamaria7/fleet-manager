@@ -1,6 +1,5 @@
 package com.flixbus.fleetmanager.service.validator;
 
-import static org.mockito.ArgumentMatchers.intThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,9 +11,7 @@ import com.flixbus.fleetmanager.error.ServerToClientException;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.repository.BusRepository;
 import com.flixbus.fleetmanager.service.TranslationService;
-import java.rmi.server.ServerCloneException;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
