@@ -17,7 +17,7 @@ public class ErrorInfoService {
   }
 
   public ErrorInfo createClientErrorInfo(ServerToClientException e) {
-    String header = e.getHeader() != null ? e.getHeader() : translationService.get("common.error.header");
+    String header = e.getHeader() != null ? translationService.get(e.getHeader()) : translationService.get("common.error.header");
     List<String> messages = !e.getMessages().isEmpty() ? e.getMessages() : Collections.singletonList(translationService.get("common.error.message"));
     ErrorInfo errorInfo = new ErrorInfo(header, messages);
     return errorInfo;

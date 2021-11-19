@@ -15,6 +15,7 @@ import com.flixbus.fleetmanager.error.ServerToClientException;
 import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.DepotRepository;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
+import java.util.Optional;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -45,10 +46,10 @@ public class DepotServiceTest {
     //given
     Integer id = 1;
     DepotDto depotDto = new DepotDto();
-    Depot depot = new Depot();
+    Optional<Depot> depot = Optional.of(new Depot());
 
-    given(depotRepository.getById(id)).willReturn(depot);
-    given(depotMapper.toDto(depot)).willReturn(depotDto);
+    given(depotRepository.findById(id)).willReturn(depot);
+    given(depotMapper.toDto(depot.get())).willReturn(depotDto);
 
     //when
     DepotDto result = depotService.getById(id);
@@ -63,7 +64,7 @@ public class DepotServiceTest {
     DepotDto depotDto = new DepotDto();
     Depot depot = new Depot();
 
-    given(depotMapper.fromDto(null, depotDto)).willReturn(depot);
+    given(depotMapper.fromDto(depotDto)).willReturn(depot);
     given(depotRepository.saveAndFlush(depot)).willReturn(depot);
     given(depotMapper.toDto(depot)).willReturn(depotDto);
 
@@ -77,17 +78,17 @@ public class DepotServiceTest {
   @Test
   public void shouldEditDepot() throws Exception {
     //given
-    Integer id = 1;
     DepotDto depotDto = new DepotDto();
+    depotDto.setId(1);
     Depot depot = new Depot();
 
-    doNothing().when(depotValidator).validateOnEdit(id);
-    given(depotMapper.fromDto(id, depotDto)).willReturn(depot);
+    doNothing().when(depotValidator).validateOnEdit(depotDto.getId());
+    given(depotMapper.fromDto(depotDto)).willReturn(depot);
     given(depotRepository.saveAndFlush(depot)).willReturn(depot);
     given(depotMapper.toDto(depot)).willReturn(depotDto);
 
     //when
-    DepotDto result = depotService.edit(id, depotDto);
+    DepotDto result = depotService.edit(depotDto);
 
     //then
     assertEquals(result, depotDto);
@@ -96,11 +97,12 @@ public class DepotServiceTest {
   @Test(expected = ServerToClientException.class)
   public void shouldNotAllowEditDepot_invalidDepot() throws Exception {
     //given
-    Integer id = 1;
-    doThrow(ServerToClientException.class).when(depotValidator).validateOnEdit(id);
+    DepotDto depotDto = new DepotDto();
+    depotDto.setId(1);
+    doThrow(ServerToClientException.class).when(depotValidator).validateOnEdit(depotDto.getId());
 
     //when
-    depotService.edit(id, new DepotDto());
+    depotService.edit(depotDto);
 
     //then
     verifyNoInteractions(depotMapper);

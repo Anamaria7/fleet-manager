@@ -26,6 +26,7 @@ public class Depot {
   @Column(name = "DEPOT_NAME", nullable = false)
   private String name;
 
+  @Column(name = "CAPACITY", nullable = false)
   private Integer capacity;
 
   @OneToMany(mappedBy = "depot", cascade = CascadeType.ALL, orphanRemoval = true)

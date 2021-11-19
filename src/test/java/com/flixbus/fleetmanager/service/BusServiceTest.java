@@ -16,6 +16,7 @@ import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
+import java.util.Optional;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -44,20 +45,35 @@ public class BusServiceTest {
   }
 
   @Test
-  public void shouldGetDetailsByPlateNumber() {
+  public void shouldGetBusById() {
     //given
-    String plateNumber = "SCVV";
+    Integer id = 1;
     Bus bus = new Bus();
+    Optional<Bus> optional = Optional.of(bus);
     BusDto busDto = new BusDto();
 
-    given(busRepository.findFirstByPlateNumberEquals(plateNumber)).willReturn(bus);
+    given(busRepository.findById(id)).willReturn(optional);
     given(busMapper.toDto(bus)).willReturn(busDto);
 
     //when
-    BusDto result = busService.getDetailsByPlateNumber(plateNumber);
+    BusDto result = busService.getDetailsById(id);
 
     //then
     assertEquals(result, busDto);
+  }
+
+  @Test
+  public void shouldGetBusById_null() {
+    //given
+    Integer id = 1;
+
+    given(busRepository.findById(id)).willReturn(Optional.empty());
+
+    //when
+    BusDto result = busService.getDetailsById(id);
+
+    //then
+    assertEquals(result, null);
   }
 
   @Test
@@ -70,7 +86,7 @@ public class BusServiceTest {
     Depot depot = new Depot();
     depot.setId(12);
 
-    given(busMapper.fromDto(null, busDto)).willReturn(bus);
+    given(busMapper.fromDto(busDto)).willReturn(bus);
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
     given(busRepository.saveAndFlush(bus)).willReturn(bus);
     given(busMapper.toDto(bus)).willReturn(busDto);
@@ -86,7 +102,7 @@ public class BusServiceTest {
   public void shouldNotAllowCreateBus_invalidBus() throws Exception {
     //given
     BusDto busDto = new BusDto();
-    doThrow(ServerToClientException.class).when(busValidator).validateOnCreate(null, busDto);
+    doThrow(ServerToClientException.class).when(busValidator).validateOnCreate(busDto);
 
     //when
     busService.create(busDto);
@@ -103,7 +119,7 @@ public class BusServiceTest {
     busDto.setDepotId(12);
     Bus bus = new Bus();
 
-    given(busMapper.fromDto(null, busDto)).willReturn(bus);
+    given(busMapper.fromDto(busDto)).willReturn(bus);
     doThrow(ServerToClientException.class).when(depotValidator).validateExists(busDto.getDepotId());
 
     //when
@@ -128,7 +144,6 @@ public class BusServiceTest {
   @Test
   public void shouldEditBus() throws Exception {
     //given
-    Integer id = 1;
     BusDto busDto = new BusDto();
     busDto.setDepotId(12);
     Bus bus = new Bus();
@@ -136,13 +151,13 @@ public class BusServiceTest {
     Depot depot = new Depot();
     depot.setId(12);
 
-    given(busMapper.fromDto(id, busDto)).willReturn(bus);
+    given(busMapper.fromDto(busDto)).willReturn(bus);
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
     given(busRepository.saveAndFlush(bus)).willReturn(bus);
     given(busMapper.toDto(bus)).willReturn(busDto);
 
     //when
-    BusDto result = busService.edit(id, busDto);
+    BusDto result = busService.edit(busDto);
 
     //then
     assertEquals(busDto, result);
@@ -153,10 +168,10 @@ public class BusServiceTest {
     //given
     Integer id = 1;
     BusDto busDto = new BusDto();
-    doThrow(ServerToClientException.class).when(busValidator).validateOnEdit(id, busDto);
+    doThrow(ServerToClientException.class).when(busValidator).validateOnEdit(busDto);
 
     //when
-    busService.edit(id, busDto);
+    busService.edit(busDto);
 
     //then
     verifyNoInteractions(busMapper);
@@ -166,22 +181,20 @@ public class BusServiceTest {
   @Test(expected = ServerToClientException.class)
   public void shouldNotAllowEditBus_invalidDepot() throws Exception {
     //given
-    Integer id = 1;
     BusDto busDto = new BusDto();
     busDto.setDepotId(12);
     Bus bus = new Bus();
 
-    given(busMapper.fromDto(id, busDto)).willReturn(bus);
+    given(busMapper.fromDto(busDto)).willReturn(bus);
     doThrow(ServerToClientException.class).when(depotValidator).validateExists(busDto.getDepotId());
 
     //when
-    busService.edit(id, busDto);
+    busService.edit(busDto);
   }
 
   @Test(expected = ServerToClientException.class)
   public void shouldNotAllowEditBus_depotCapacityExceeded() throws Exception {
     //given
-    Integer id = 1;
     BusDto busDto = new BusDto();
     busDto.setDepotId(12);
     Depot depot = new Depot();
@@ -191,7 +204,7 @@ public class BusServiceTest {
     doThrow(ServerToClientException.class).when(depotValidator).validateCapacityOnAddBus(depot);
 
     //when
-    busService.edit(id, busDto);
+    busService.edit(busDto);
   }
 
   @Test

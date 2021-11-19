@@ -22,14 +22,14 @@ public class BusValidator {
     this.translationService = translationService;
   }
 
-  public void validateOnCreate(Integer id, BusDto bus) {
-    validatePlateNumber(id, bus);
+  public void validateOnCreate(BusDto bus) {
+    validatePlateNumber(bus);
     validateCapacity(bus.getCapacity());
   }
 
-  public void validateOnEdit(Integer id, BusDto bus) {
-    validateExists(id);
-    validatePlateNumber(id, bus);
+  public void validateOnEdit(BusDto bus) {
+    validateExists(bus.getId());
+    validatePlateNumber(bus);
     validateCapacity(bus.getCapacity());
   }
 
@@ -41,9 +41,9 @@ public class BusValidator {
     return bus.get();
   }
 
-  private void validatePlateNumber(Integer id, BusDto bus) {
+  private void validatePlateNumber(BusDto bus) {
     Bus existingBus = busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber());
-    if (existingBus != null && !existingBus.getId().equals(id)) {
+    if (existingBus != null && !existingBus.getId().equals(bus.getId())) {
       throw new ServerToClientException(translationService.get("bus.plateNumber.exists", bus.getPlateNumber()));
     }
   }

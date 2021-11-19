@@ -1,6 +1,6 @@
 package com.flixbus.fleetmanager.service.validator;
 
-import com.flixbus.fleetmanager.dto.DepotDto;
+import com.flixbus.fleetmanager.error.IllegalOperationException;
 import com.flixbus.fleetmanager.error.ServerToClientException;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.Depot;
@@ -33,7 +33,7 @@ public class DepotValidator {
   public void validateOnDelete(Integer id) {
     List<Bus> buses = busRepository.findByDepotId(id);
     if (buses != null && !buses.isEmpty()) {
-      throw new ServerToClientException(translationService.get("depot.delete.not.allowed", id));
+      throw new IllegalOperationException(translationService.get("depot.delete.not.allowed", id));
     }
   }
 

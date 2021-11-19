@@ -18,6 +18,7 @@ public class BusQueryBuilder {
   public static final String FIELD_CAPACITY = "capacity";
   public static final String TABLE_DEPOT = "depot";
   public static final String TABLE_DEPOT_FIELD_NAME = "name";
+  public static final String PERCENT = "%";
 
   private final List<Predicate> predicates;
   private final CriteriaQuery<Bus> query;
@@ -55,10 +56,10 @@ public class BusQueryBuilder {
           predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(bus.get(field)), term.getValue().toLowerCase()));
           break;
         case CONTAINS_IGNORE_CASE:
-          predicates.add(criteriaBuilder.like(criteriaBuilder.lower(bus.get(field)), "%" + term.getValue().toLowerCase() + "%"));
+          predicates.add(criteriaBuilder.like(criteriaBuilder.lower(bus.get(field)), PERCENT + term.getValue().toLowerCase() + PERCENT));
           break;
         default:
-          predicates.add(criteriaBuilder.like(bus.get(field), "%" + term.getValue() + "%"));
+          predicates.add(criteriaBuilder.like(bus.get(field), PERCENT + term.getValue() + PERCENT));
       }
     }
     return this;
@@ -87,9 +88,21 @@ public class BusQueryBuilder {
     return this;
   }
 
-  public BusQueryBuilder withDepotName(String value) {
-    if (value != null) {
-      predicates.add(criteriaBuilder.equal(bus.join(TABLE_DEPOT).get(TABLE_DEPOT_FIELD_NAME), value));
+  public BusQueryBuilder withDepotName(StringTerm term) {
+    if (term != null && term.getValue() != null) {
+      switch (term.getFilterType()) {
+        case EQUALS:
+          predicates.add(criteriaBuilder.equal(bus.join(TABLE_DEPOT).get(TABLE_DEPOT_FIELD_NAME), term.getValue()));
+          break;
+        case EQUALS_IGNORE_CASE:
+          predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(bus.join(TABLE_DEPOT).get(TABLE_DEPOT_FIELD_NAME)), term.getValue().toLowerCase()));
+          break;
+        case CONTAINS_IGNORE_CASE:
+          predicates.add(criteriaBuilder.like(criteriaBuilder.lower(bus.join(TABLE_DEPOT).get(TABLE_DEPOT_FIELD_NAME)), PERCENT + term.getValue().toLowerCase() + PERCENT));
+          break;
+        default:
+          predicates.add(criteriaBuilder.like(bus.join(TABLE_DEPOT).get(TABLE_DEPOT_FIELD_NAME), PERCENT + term.getValue() + PERCENT));
+      }
     }
     return this;
   }

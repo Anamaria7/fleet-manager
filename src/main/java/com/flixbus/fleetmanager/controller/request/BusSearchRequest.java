@@ -7,9 +7,11 @@ import com.flixbus.fleetmanager.repository.criteria.NumberTerm;
 import com.flixbus.fleetmanager.repository.criteria.StringTerm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BusSearchRequest {
 
   @JsonProperty("plateNumber")
@@ -18,7 +20,9 @@ public class BusSearchRequest {
   @JsonProperty("capacity")
   private NumberTerm capacity;
 
-  private String depotName;
+  @JsonProperty("depotName")
+  private StringTerm depotName;
+
   private BusType type;
   private BusColor color;
 

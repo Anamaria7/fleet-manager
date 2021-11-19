@@ -5,13 +5,15 @@ import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.service.BusService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,36 +27,39 @@ public class BusController {
     this.busService = busService;
   }
 
-  @GetMapping()
-  public BusDto getBusByPlateNumber(@RequestParam(value = "plateNumber") String plateNumber) {
-    return busService.getDetailsByPlateNumber(plateNumber);
+  @GetMapping("/{id}")
+  public ResponseEntity<BusDto> getBusById(@PathVariable Integer id) {
+    BusDto bus = busService.getDetailsById(id);
+    if (bus != null) {
+      return new ResponseEntity<>(bus, HttpStatus.OK);
+    }
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @PostMapping
-  public BusDto createBus(@RequestBody BusDto newBus) {
-    return busService.create(newBus);
+  public ResponseEntity<BusDto> createBus(@RequestBody BusDto newBus) {
+    BusDto bus = busService.create(newBus);
+    return new ResponseEntity<>(bus, HttpStatus.CREATED);
   }
 
-  @PostMapping("/{id}")
-  public BusDto editBus(@PathVariable Integer id, @RequestBody BusDto bus) {
-    return busService.edit(id, bus);
+  @PutMapping
+  public ResponseEntity<BusDto> updateBus(@RequestBody BusDto bus) {
+    BusDto busDto = busService.edit(bus);
+    return new ResponseEntity<>(busDto, HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
-  public void deleteBus(@PathVariable Integer id) {
+  public ResponseEntity<?> deleteBus(@PathVariable Integer id) {
     busService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PostMapping("/search")
-  public List<BusDto> search(@RequestBody BusSearchRequest busSearchRequest) {
-    return busService.search(busSearchRequest);
-  }
-
-  @PostMapping("/filter")
-  public List<BusDto> filter(@RequestBody BusSearchRequest busSearchRequest) {
-    return busService.filter(busSearchRequest);
+  public ResponseEntity<List<BusDto>> search(@RequestBody BusSearchRequest busSearchRequest) {
+    List<BusDto> buses = busService.search(busSearchRequest);
+    if (buses != null && !buses.isEmpty()) {
+      return new ResponseEntity<>(buses, HttpStatus.OK);
+    }
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 }
-
-//TODO filter
-//TODO unit tests

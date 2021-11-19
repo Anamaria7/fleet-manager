@@ -76,7 +76,7 @@ public class BusValidatorTest {
     given(busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber())).willReturn(null);
 
     //when
-    busValidator.validateOnCreate(null, bus);
+    busValidator.validateOnCreate(bus);
 
     //then
     verifyNoInteractions(translationService);
@@ -96,7 +96,7 @@ public class BusValidatorTest {
     given(busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber())).willReturn(existingBus);
 
     //when
-    busValidator.validateOnCreate(null, bus);
+    busValidator.validateOnCreate(bus);
 
     //then
     verify(translationService, times(1)).get("bus.plateNumber.exists", bus.getPlateNumber());
@@ -111,7 +111,7 @@ public class BusValidatorTest {
     given(busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber())).willReturn(null);
 
     //when
-    busValidator.validateOnCreate(null, bus);
+    busValidator.validateOnCreate(bus);
 
     //then
     verify(translationService, times(1)).get("bus.capacity.invalid", bus.getCapacity());
@@ -120,17 +120,17 @@ public class BusValidatorTest {
   @Test
   public void validateOnEdit_true() {
     //given
-    Integer id = 1;
     BusDto bus = new BusDto();
+    bus.setId(1);
     bus.setPlateNumber("PLATENO");
     bus.setCapacity(50);
     Optional<Bus> optional = Optional.of(new Bus());
 
-    given(busRepository.findById(id)).willReturn(optional);
+    given(busRepository.findById(bus.getId())).willReturn(optional);
     given(busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber())).willReturn(null);
 
     //when
-    busValidator.validateOnEdit(id, bus);
+    busValidator.validateOnEdit(bus);
 
     //then
     verifyNoInteractions(translationService);
@@ -142,10 +142,8 @@ public class BusValidatorTest {
     Integer id = 1;
     BusDto bus = new BusDto();
 
-    given(busRepository.findById(id)).willReturn(Optional.empty());
-
     //when
-    busValidator.validateOnEdit(id, bus);
+    busValidator.validateOnEdit(bus);
 
     //then
     verify(translationService, times(1)).get("bus.not.exists", id);
@@ -166,7 +164,7 @@ public class BusValidatorTest {
     given(busRepository.findFirstByPlateNumberEquals(bus.getPlateNumber())).willReturn(existingBus);
 
     //when
-    busValidator.validateOnCreate(null, bus);
+    busValidator.validateOnCreate(bus);
 
     //then
     verify(translationService, times(1)).get("bus.plateNumber.exists", bus.getPlateNumber());
@@ -179,10 +177,8 @@ public class BusValidatorTest {
     BusDto bus = new BusDto();
     bus.setCapacity(100);
 
-    given(busRepository.findById(id)).willReturn(Optional.empty());
-
     //when
-    busValidator.validateOnEdit(id, bus);
+    busValidator.validateOnEdit(bus);
 
     //then
     verify(translationService, times(1)).get("bus.capacity.invalid", bus.getCapacity());

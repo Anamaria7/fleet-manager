@@ -5,6 +5,7 @@ import com.flixbus.fleetmanager.dto.mapper.DepotMapper;
 import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.DepotRepository;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +25,20 @@ public class DepotService {
   }
 
   public DepotDto getById(Integer id) {
-    return depotMapper.toDto(depotRepository.getById(id));
+    Optional<Depot> depot = depotRepository.findById(id);
+    return depot.map(depotMapper::toDto).orElse(null);
   }
 
   @Transactional
   public DepotDto create(DepotDto depotDto) {
-    Depot depot = depotMapper.fromDto(null, depotDto);
+    Depot depot = depotMapper.fromDto(depotDto);
     return depotMapper.toDto(depotRepository.saveAndFlush(depot));
   }
 
   @Transactional
-  public DepotDto edit(Integer id, DepotDto depotDto) {
-    depotValidator.validateOnEdit(id);
-    Depot depot = depotMapper.fromDto(id, depotDto);
+  public DepotDto edit(DepotDto depotDto) {
+    depotValidator.validateOnEdit(depotDto.getId());
+    Depot depot = depotMapper.fromDto(depotDto);
     return depotMapper.toDto(depotRepository.saveAndFlush(depot));
   }
 

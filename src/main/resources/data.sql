@@ -1,3 +1,4 @@
+-- table creation skipped, using auto-create
 -- DROP TABLE IF EXISTS BUS;
 --
 -- CREATE TABLE BUS (

@@ -26,18 +26,18 @@ public class Bus {
   private String plateNumber;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "TYPE", nullable = false)
   private BusType type;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "COLOR", nullable = false)
   private BusColor color;
 
+  @Column(name = "CAPACITY", nullable = false)
   private Integer capacity;
 
-//  @Column(name = "DEPOT_ID", insertable = false, updatable = false)
-//  private Integer depotId;
-
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "DEPOT_ID", referencedColumnName = "ID") //, nullable = false)
+  @JoinColumn(name = "DEPOT_ID", referencedColumnName = "ID")
   private Depot depot;
 
 }

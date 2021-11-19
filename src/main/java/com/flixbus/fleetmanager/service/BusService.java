@@ -6,10 +6,10 @@ import com.flixbus.fleetmanager.dto.mapper.BusMapper;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
-import com.flixbus.fleetmanager.repository.DepotRepository;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,36 +23,35 @@ public class BusService {
   private final DepotValidator depotValidator;
 
   @Autowired
-  public BusService(BusRepository busRepository, BusMapper busMapper,
-      BusValidator busValidator, DepotValidator depotValidator) {
+  public BusService(BusRepository busRepository, BusMapper busMapper, BusValidator busValidator, DepotValidator depotValidator) {
     this.busRepository = busRepository;
     this.busMapper = busMapper;
     this.busValidator = busValidator;
     this.depotValidator = depotValidator;
   }
 
-  public BusDto getDetailsByPlateNumber(String plateNumber) {
-    Bus bus = busRepository.findFirstByPlateNumberEquals(plateNumber);
-    if (bus != null) {
-      return busMapper.toDto(bus);
+  public BusDto getDetailsById(Integer id) {
+    Optional<Bus> bus = busRepository.findById(id);
+    if (bus.isPresent()) {
+      return busMapper.toDto(bus.get());
     }
     return null;
   }
 
   @Transactional
   public BusDto create(BusDto busDto) {
-    busValidator.validateOnCreate(null, busDto);
-    return saveBus(null, busDto);
+    busValidator.validateOnCreate(busDto);
+    return saveBus(busDto);
   }
 
   @Transactional
-  public BusDto edit(Integer id, BusDto busDto) {
-    busValidator.validateOnEdit(id, busDto);
-    return saveBus(id, busDto);
+  public BusDto edit(BusDto busDto) {
+    busValidator.validateOnEdit(busDto);
+    return saveBus(busDto);
   }
 
-  private BusDto saveBus(Integer id, BusDto busDto) {
-    Bus bus = busMapper.fromDto(id, busDto);
+  private BusDto saveBus(BusDto busDto) {
+    Bus bus = busMapper.fromDto(busDto);
     if (busDto.getDepotId() != null) {
       Depot depot = depotValidator.validateExists(busDto.getDepotId());
       depotValidator.validateCapacityOnAddBus(depot);
@@ -68,12 +67,5 @@ public class BusService {
   public List<BusDto> search(BusSearchRequest busSearchRequest) {
     List<Bus> buses = busRepository.filterBuses(busSearchRequest);
     return busMapper.toDtoList(buses);
-  }
-
-  public List<BusDto> filter(BusSearchRequest busSearchRequest) {
-//    return busRepository.findByPlateNumberContains(busSearchRequest.getPlateNumber());
-//    return busRepository.findByType(BusType.DOUBLE_DECKER);
-//    return busRepository.findByColor(BusColor.GREEN);
-    return busMapper.toDtoList(busRepository.findByCapacityGreaterThanEqualOrderByCapacityDesc(40));
   }
 }

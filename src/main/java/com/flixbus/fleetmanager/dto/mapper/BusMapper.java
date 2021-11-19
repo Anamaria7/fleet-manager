@@ -2,49 +2,29 @@ package com.flixbus.fleetmanager.dto.mapper;
 
 import com.flixbus.fleetmanager.dto.BusDto;
 import com.flixbus.fleetmanager.model.Bus;
-import java.util.ArrayList;
+import com.flixbus.fleetmanager.model.Depot;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-@Component
-public class BusMapper {
+@Mapper
+public abstract class BusMapper {
 
-  public BusDto toDto(Bus bus) {
-    BusDto busDto = new BusDto();
-    busDto.setId(bus.getId());
-    busDto.setPlateNumber(bus.getPlateNumber());
-    busDto.setType(bus.getType());
-    busDto.setColor(bus.getColor());
-    busDto.setCapacity(bus.getCapacity());
-    busDto.setDepotId(bus.getDepot() != null ? bus.getDepot().getId() : null);
-    return busDto;
-  }
+  @Mapping(source = "depot", target = "depotId", qualifiedByName = "depotId")
+  public abstract BusDto toDto(Bus bus);
+  @Mapping(target = "depot", ignore = true)
+  public abstract Bus fromDto(BusDto busDto);
 
-  public Bus fromDto(Integer id, BusDto busDto) {
-    Bus bus = new Bus();
-    bus.setId(id);
-    bus.setPlateNumber(busDto.getPlateNumber());
-    bus.setType(busDto.getType());
-    bus.setColor(busDto.getColor());
-    bus.setCapacity(busDto.getCapacity());
+  public abstract List<BusDto> toDtoList(List<Bus> buses);
+  public abstract List<Bus> fromDtoList(List<BusDto> buses);
 
-    return bus;
-  }
-
-  public List<BusDto> toDtoList(List<Bus> buses) {
-    List<BusDto> busDtos = new ArrayList<>();
-    if (buses != null) {
-      busDtos.addAll(buses.stream().map(this::toDto).collect(Collectors.toList()));
+  @Named("depotId")
+  public Integer depotId(Depot depot) {
+    if (depot != null) {
+      return depot.getId();
     }
-    return busDtos;
+    return null;
   }
 
-  public List<Bus> fromDtoList(List<BusDto> busDtos) {
-    List<Bus> buses = new ArrayList<>();
-    if (busDtos != null) {
-      buses.addAll(busDtos.stream().map(bus -> fromDto(null, bus)).collect(Collectors.toList()));
-    }
-    return buses;
-  }
 }

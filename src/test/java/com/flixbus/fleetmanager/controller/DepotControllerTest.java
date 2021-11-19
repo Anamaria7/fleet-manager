@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,24 +64,23 @@ public class DepotControllerTest {
     mvc.perform(post("/api/depot")
         .content(requestBody)
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(content().string(responseBody));
   }
 
   @Test
   public void shouldEditDepot() throws Exception {
     //given
-    Integer depotId = 1;
     DepotDto depotDto = new DepotDto();
-    depotDto.setId(depotId);
+    depotDto.setId(1);
 
     String requestBody = new ObjectMapper().writeValueAsString(depotDto);
     String responseBody = new ObjectMapper().writeValueAsString(depotDto);
 
-    given(depotService.edit(depotId, depotDto)).willReturn(depotDto);
+    given(depotService.edit(depotDto)).willReturn(depotDto);
 
     //when
-    mvc.perform(post("/api/depot/{id}", depotId)
+    mvc.perform(put("/api/depot")
         .content(requestBody)
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

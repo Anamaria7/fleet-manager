@@ -7,67 +7,49 @@ import com.flixbus.fleetmanager.service.validator.BusValidator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Mapper
 @Component
-public class DepotMapper {
-
-  private final BusValidator busValidator;
+public abstract class DepotMapper {
 
   @Autowired
-  public DepotMapper(BusValidator busValidator) {
-    this.busValidator = busValidator;
-  }
+  private BusValidator busValidator;
 
-  public DepotDto toDto(Depot depot) {
-    DepotDto depotDto = new DepotDto();
-    depotDto.setId(depot.getId());
-    depotDto.setCapacity(depot.getCapacity());
-    depotDto.setName(depot.getName());
+  @Mapping(source = "parkedBuses", target = "parkedBusIds", qualifiedByName = "parkedBusIds")
+//  @Mapping(expression = "java(parkedBusIds(depot.getParkedBuses()))", target = "parkedBusIds")
+  public abstract DepotDto toDto(Depot depot);
+  @Mapping(source = "parkedBusIds", target = "parkedBuses", qualifiedByName = "parkedBuses")
+//  @Mapping(expression = "java(parkedBuses(depotDto.getParkedBusIds()))", target = "parkedBuses")
+  public abstract Depot fromDto(DepotDto depotDto);
+  public abstract List<DepotDto> toDtoList(List<Depot> depot);
+  public abstract List<Depot> fromDtoList(List<DepotDto> depotDto);
 
-    if (depot.getParkedBuses() != null) {
-      depotDto.setParkedBusIds(depot.getParkedBuses().stream().map(Bus::getId).collect(Collectors.toList()));
+  @Named("parkedBusIds")
+  public List<Integer> parkedBusIds(List<Bus> buses) {
+    if (buses != null) {
+      return buses.stream().map(Bus::getId).collect(Collectors.toList());
     }
-
-    return depotDto;
+    return null;
   }
 
-  private List<Bus> loadDepotBuses(DepotDto depotDto) {
+  @Named("parkedBuses")
+  public List<Bus> parkedBuses(List<Integer> parkedBusIds) {
+    if (parkedBusIds != null) {
+      return loadDepotBuses(parkedBusIds);
+    }
+    return null;
+  }
+
+  private List<Bus> loadDepotBuses(List<Integer> parkedBusIds) {
     List<Bus> buses = new ArrayList<>();
-    if (depotDto.getParkedBusIds() != null) {
-      buses.addAll(depotDto.getParkedBusIds().stream().map(busValidator::validateExists).collect(Collectors.toList()));
+    if (parkedBusIds != null) {
+      buses.addAll(parkedBusIds.stream().map(busValidator::validateExists).collect(Collectors.toList()));
     }
     return buses;
   }
-
-  public Depot fromDto(Integer id, DepotDto depotDto) {
-    Depot depot = new Depot();
-    depot.setId(id);
-    depot.setCapacity(depotDto.getCapacity());
-    depot.setName(depotDto.getName());
-
-    if (depotDto.getParkedBusIds() != null && !depotDto.getParkedBusIds().isEmpty()) {
-      depot.setParkedBuses(loadDepotBuses(depotDto));
-    }
-
-    return depot;
-  }
-
-  public List<DepotDto> toDtoList(List<Depot> depots) {
-    List<DepotDto> list = new ArrayList<>();
-    if (depots != null) {
-      list.addAll(depots.stream().map(this::toDto).collect(Collectors.toList()));
-    }
-    return list;
-  }
-
-  public List<Depot> fromDtoList(List<DepotDto> depotDtos) {
-    List<Depot> depots = new ArrayList<>();
-    if (depotDtos != null) {
-      depots.addAll(depotDtos.stream().map(depot -> fromDto(depot.getId(), depot)).collect(Collectors.toList()));
-    }
-    return depots;
-  }
-
 }

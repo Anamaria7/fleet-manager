@@ -2,10 +2,13 @@ package com.flixbus.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.flixbus.fleetmanager.controller.request.BusSearchRequest;
 import com.flixbus.fleetmanager.model.Bus;
 import com.flixbus.fleetmanager.model.BusColor;
 import com.flixbus.fleetmanager.model.BusType;
 import com.flixbus.fleetmanager.model.Depot;
+import com.flixbus.fleetmanager.repository.criteria.StringFilterType;
+import com.flixbus.fleetmanager.repository.criteria.StringTerm;
 import java.util.List;
 import javax.annotation.Resource;
 import org.junit.Test;
@@ -84,8 +87,96 @@ public class BusRepositoryTest {
 
     busRepository.save(bus);
   }
+
+  @Test
+  public void test_filterBuses_byPlateNumber_CONTAINS() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setPlateNumber(new StringTerm("BUS", StringFilterType.CONTAINS));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 6);
+  }
+
+  @Test
+  public void test_filterBuses_byPlateNumber_EQUALS() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setPlateNumber(new StringTerm("BUS-SBZ-001", StringFilterType.EQUALS));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 1);
+    assertEquals(result.get(0).getPlateNumber(), "BUS-SBZ-001");
+  }
+
+  @Test
+  public void test_filterBuses_byPlateNumber_EQUALS_IGNORE_CASE() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setPlateNumber(new StringTerm("BuS-SbZ-001", StringFilterType.EQUALS_IGNORE_CASE));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 1);
+    assertEquals(result.get(0).getPlateNumber(), "BUS-SBZ-001");
+  }
+
+  @Test
+  public void test_filterBuses_byType() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setType(BusType.DOUBLE_DECKER);
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 3);
+  }
+
+  @Test
+  public void test_filterBuses_byColor() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setColor(BusColor.GREEN);
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 4);
+  }
+
+  @Test
+  public void test_filterBuses_byDepotName_EQUALS() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setDepotName(new StringTerm("Grand Central Station", StringFilterType.EQUALS));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 1);
+  }
+
+  @Test
+  public void test_filterBuses_byDepotName_EQUALS_IGNORE_CASE() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setDepotName(new StringTerm("Grand CEntrAL Station", StringFilterType.EQUALS_IGNORE_CASE));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 1);
+  }
+
+  @Test
+  public void test_filterBuses_byDepotName_CONTAINS() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setDepotName(new StringTerm("Far Far", StringFilterType.CONTAINS));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 3);
+  }
+
+  @Test
+  public void test_filterBuses_byDepotName_CONTAINS_IGNORE_CASE() {
+    BusSearchRequest busSearchRequest = new BusSearchRequest();
+    busSearchRequest.setDepotName(new StringTerm("Far FAR", StringFilterType.CONTAINS_IGNORE_CASE));
+
+    List<Bus> result = busRepository.filterBuses(busSearchRequest);
+
+    assertEquals(result.size(), 3);
+  }
 }
-//TODO mapstruct
-//for loops
-//filters
-//entity annotations

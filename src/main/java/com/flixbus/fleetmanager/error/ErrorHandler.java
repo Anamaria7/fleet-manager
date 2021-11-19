@@ -1,8 +1,5 @@
 package com.flixbus.fleetmanager.error;
 
-import com.flixbus.fleetmanager.error.ErrorInfo;
-import com.flixbus.fleetmanager.error.ErrorInfoService;
-import com.flixbus.fleetmanager.error.ServerToClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,8 +20,14 @@ public class ErrorHandler {
   @ExceptionHandler(ServerToClientException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorInfo handleServletRequestReaderIOException(ServerToClientException ex) {
+  public ErrorInfo handleServerToClientException(ServerToClientException ex) {
     return errorInfoService.createClientErrorInfo(ex);
   }
 
+  @ExceptionHandler(IllegalOperationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorInfo handleIllegalOperationException(IllegalOperationException ex) {
+    return errorInfoService.createClientErrorInfo(ex);
+  }
 }
