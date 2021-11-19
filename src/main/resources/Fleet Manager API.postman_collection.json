@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "c382d361-ccd0-435f-abb3-e9576e3c56f3",
+		"name": "Fleet Manager API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Buses",
+			"item": [
+				{
+					"name": "Get Bus by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/bus/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"bus",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bus",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plateNumber\": \"BUS-SBT-003\",\r\n    \"type\": \"REGULAR\",\r\n    \"color\": 1,\r\n    \"capacity\": 30,\r\n    \"depotId\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/bus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"bus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Bus",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 7,\r\n    \"plateNumber\": \"BUS-SBT-001\",\r\n    \"type\": \"REGULAR\",\r\n    \"color\": \"GREEN\",\r\n    \"capacity\": 36,\r\n    \"depotId\": 7\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/bus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"bus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bus",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plateNumber\": \"BUS-SBZ-542\",\r\n    \"type\": \"REGULAR\",\r\n    \"color\": 1,\r\n    \"capacity\": 14,\r\n    \"depotId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/bus/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"bus",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Bus",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plateNumber\":{\r\n        \"value\": \"BUS-\",\r\n        \"filterType\": \"CONTAINS\"\r\n    },\r\n    \"type\": \"DOUBLE_DECKER\",\r\n    \"color\": 0,\r\n    \"capacity\":{\r\n        \"value\": 30,\r\n        \"filterType\": \"LTE\"\r\n    },\r\n     \"depotName\":{\r\n        \"value\": \"FaR\",\r\n        \"filterType\": \"CONTAINS_IGNORE_CASE\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/bus/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"bus",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Depots",
+			"item": [
+				{
+					"name": "Get Depot by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/depot/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"depot",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Depot",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"LA\",\r\n    \"capacity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/depot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"depot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Depot",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 6,\r\n    \"name\": \"Far Far Away2\",\r\n    \"capacity\": 3,\r\n    \"parkedBusIds\": [1,2,5]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/depot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"depot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Depot",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/depot/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"depot",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
