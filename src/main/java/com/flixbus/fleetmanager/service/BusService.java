@@ -54,7 +54,7 @@ public class BusService {
     Bus bus = busMapper.fromDto(busDto);
     if (busDto.getDepotId() != null) {
       Depot depot = depotValidator.validateExists(busDto.getDepotId());
-      depotValidator.validateCapacityOnAddBus(depot);
+      depotValidator.validateCapacity(depot.getParkedBuses().size(), depot.getCapacity());
       bus.setDepot(depot);
     }
     return busMapper.toDto(busRepository.saveAndFlush(bus));

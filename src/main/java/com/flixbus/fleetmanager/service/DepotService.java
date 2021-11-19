@@ -37,7 +37,7 @@ public class DepotService {
 
   @Transactional
   public DepotDto edit(DepotDto depotDto) {
-    depotValidator.validateOnEdit(depotDto.getId());
+    depotValidator.validateOnEdit(depotDto);
     Depot depot = depotMapper.fromDto(depotDto);
     return depotMapper.toDto(depotRepository.saveAndFlush(depot));
   }

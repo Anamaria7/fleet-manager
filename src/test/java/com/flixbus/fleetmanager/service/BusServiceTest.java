@@ -1,7 +1,10 @@
 package com.flixbus.fleetmanager.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,6 +19,8 @@ import com.flixbus.fleetmanager.model.Depot;
 import com.flixbus.fleetmanager.repository.BusRepository;
 import com.flixbus.fleetmanager.service.validator.BusValidator;
 import com.flixbus.fleetmanager.service.validator.DepotValidator;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +89,7 @@ public class BusServiceTest {
     Bus bus = new Bus();
 
     Depot depot = new Depot();
+    depot.setParkedBuses(Collections.emptyList());
     depot.setId(12);
 
     given(busMapper.fromDto(busDto)).willReturn(bus);
@@ -132,10 +138,11 @@ public class BusServiceTest {
     BusDto busDto = new BusDto();
     busDto.setDepotId(12);
     Depot depot = new Depot();
+    depot.setParkedBuses(Collections.singletonList(new Bus()));
 
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
-    doThrow(ServerToClientException.class).when(depotValidator).validateCapacityOnAddBus(depot);
+    doThrow(ServerToClientException.class).when(depotValidator).validateCapacity(depot.getParkedBuses().size(), depot.getCapacity());
 
     //when
     busService.create(busDto);
@@ -149,10 +156,13 @@ public class BusServiceTest {
     Bus bus = new Bus();
 
     Depot depot = new Depot();
+    depot.setParkedBuses(Collections.emptyList());
+    depot.setCapacity(1);
     depot.setId(12);
 
     given(busMapper.fromDto(busDto)).willReturn(bus);
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
+    doNothing().when(depotValidator).validateCapacity(anyInt(), anyInt());
     given(busRepository.saveAndFlush(bus)).willReturn(bus);
     given(busMapper.toDto(bus)).willReturn(busDto);
 
@@ -198,10 +208,11 @@ public class BusServiceTest {
     BusDto busDto = new BusDto();
     busDto.setDepotId(12);
     Depot depot = new Depot();
+    depot.setParkedBuses(Collections.singletonList(new Bus()));
 
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
     given(depotValidator.validateExists(busDto.getDepotId())).willReturn(depot);
-    doThrow(ServerToClientException.class).when(depotValidator).validateCapacityOnAddBus(depot);
+    doThrow(ServerToClientException.class).when(depotValidator).validateCapacity(depot.getParkedBuses().size(), depot.getCapacity());
 
     //when
     busService.edit(busDto);

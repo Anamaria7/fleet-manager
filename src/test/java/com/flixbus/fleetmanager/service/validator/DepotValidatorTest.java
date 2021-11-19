@@ -104,7 +104,7 @@ public class DepotValidatorTest {
     depot.setParkedBuses(Arrays.asList(bus1, bus2));
 
     //when
-    depotValidator.validateCapacityOnAddBus(depot);
+    depotValidator.validateCapacity(depot.getParkedBuses().size(), depot.getCapacity());
 
     //then
     verifyNoInteractions(translationService);
@@ -120,6 +120,6 @@ public class DepotValidatorTest {
     depot.setParkedBuses(Arrays.asList(bus1, bus2));
 
     //when
-    depotValidator.validateCapacityOnAddBus(depot);
+    depotValidator.validateCapacity(depot.getParkedBuses().size(), depot.getCapacity());
   }
 }

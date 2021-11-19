@@ -82,7 +82,7 @@ public class DepotServiceTest {
     depotDto.setId(1);
     Depot depot = new Depot();
 
-    doNothing().when(depotValidator).validateOnEdit(depotDto.getId());
+    doNothing().when(depotValidator).validateOnEdit(depotDto);
     given(depotMapper.fromDto(depotDto)).willReturn(depot);
     given(depotRepository.saveAndFlush(depot)).willReturn(depot);
     given(depotMapper.toDto(depot)).willReturn(depotDto);
@@ -99,7 +99,7 @@ public class DepotServiceTest {
     //given
     DepotDto depotDto = new DepotDto();
     depotDto.setId(1);
-    doThrow(ServerToClientException.class).when(depotValidator).validateOnEdit(depotDto.getId());
+    doThrow(ServerToClientException.class).when(depotValidator).validateOnEdit(depotDto);
 
     //when
     depotService.edit(depotDto);

@@ -1,5 +1,6 @@
 package com.flixbus.fleetmanager.service.validator;
 
+import com.flixbus.fleetmanager.dto.DepotDto;
 import com.flixbus.fleetmanager.error.IllegalOperationException;
 import com.flixbus.fleetmanager.error.ServerToClientException;
 import com.flixbus.fleetmanager.model.Bus;
@@ -26,8 +27,9 @@ public class DepotValidator {
     this.translationService = translationService;
   }
 
-  public void validateOnEdit(Integer id) {
-    validateExists(id);
+  public void validateOnEdit(DepotDto depotDto) {
+    validateExists(depotDto.getId());
+    validateCapacity(depotDto.getParkedBusIds().size(), depotDto.getCapacity());
   }
 
   public void validateOnDelete(Integer id) {
@@ -45,8 +47,8 @@ public class DepotValidator {
     return depot.get();
   }
 
-  public void validateCapacityOnAddBus(Depot depot) {
-    if (depot.getParkedBuses().size() - depot.getCapacity() >= 0) {
+  public void validateCapacity(Integer size, Integer capacity) {
+    if (size - capacity >= 0) {
       throw new ServerToClientException(translationService.get("depot.capacity.exceeded"));
     }
   }
